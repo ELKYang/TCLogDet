@@ -20,8 +20,8 @@ model = dict(
         out_indices=(0, 1, 2, 3),
         with_cp=False,
         convert_weights=True,
-        dcn=dict(type='DCNv2', deform_groups=1, fallback_on_stride=False),
-        stage_with_dcn=(False, True, True, True),
+        # dcn=dict(type='DCNv2', deform_groups=1, fallback_on_stride=False),
+        # stage_with_dcn=(False, True, True, True),
         init_cfg=dict(type='Pretrained', checkpoint=pretrained)),
     neck=dict(
         type='FPN',
