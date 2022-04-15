@@ -1,6 +1,6 @@
 num_classes = 50
-# model settings
 pretrained = 'swin_base_patch4_window12_384.pth'
+# model settings
 model = dict(
     type='CascadeRCNN',
     backbone=dict(
@@ -40,10 +40,8 @@ model = dict(
             target_stds=[1.0, 1.0, 1.0, 1.0]),
         loss_cls=dict(
             type='CrossEntropyLoss', use_sigmoid=True, loss_weight=1.0),
-        # loss_bbox=dict(
-        #     type='SmoothL1Loss', beta=0.1111111111111111, loss_weight=1.0)),
-        reg_decoded_bbox=True,  # 使用GIoUI时注意添加
-        loss_bbox=dict(type='GIoULoss', loss_weight=1.0)),
+        loss_bbox=dict(
+            type='SmoothL1Loss', beta=0.1111111111111111, loss_weight=1.0)),
     roi_head=dict(
         type='CascadeRoIHead',
         num_stages=3,
@@ -70,10 +68,8 @@ model = dict(
                     type='CrossEntropyLoss',
                     use_sigmoid=False,
                     loss_weight=1.0),
-                # loss_bbox=dict(type='SmoothL1Loss', beta=1.0,
-                #                loss_weight=1.0)),
-                reg_decoded_bbox=True,  # 使用GIoUI时注意添加
-                loss_bbox=dict(type='GIoULoss', loss_weight=1.0)),
+                loss_bbox=dict(type='SmoothL1Loss', beta=1.0,
+                               loss_weight=1.0)),
             dict(
                 type='Shared2FCBBoxHead',
                 in_channels=256,
@@ -89,10 +85,8 @@ model = dict(
                     type='CrossEntropyLoss',
                     use_sigmoid=False,
                     loss_weight=1.0),
-                # loss_bbox=dict(type='SmoothL1Loss', beta=1.0,
-                #                loss_weight=1.0)),
-                reg_decoded_bbox=True,  # 使用GIoUI时注意添加
-                loss_bbox=dict(type='GIoULoss', loss_weight=1.0)),
+                loss_bbox=dict(type='SmoothL1Loss', beta=1.0,
+                               loss_weight=1.0)),
             dict(
                 type='Shared2FCBBoxHead',
                 in_channels=256,
@@ -108,9 +102,7 @@ model = dict(
                     type='CrossEntropyLoss',
                     use_sigmoid=False,
                     loss_weight=1.0),
-                # loss_bbox=dict(type='SmoothL1Loss', beta=1.0, loss_weight=1.0))
-                reg_decoded_bbox=True,  # 使用GIoUI时注意添加
-                loss_bbox=dict(type='GIoULoss', loss_weight=1.0))
+                loss_bbox=dict(type='SmoothL1Loss', beta=1.0, loss_weight=1.0))
         ]),
     train_cfg=dict(
         rpn=dict(
@@ -198,32 +190,6 @@ model = dict(
             max_per_img=300)))
 
 dataset_type = 'LogDetMini'
-transformer_policies = [
-    [
-#         dict(type='Sharpness', prob=0.0, level=4),
-        dict(
-            type='Shear',
-            prob=0.5,
-            level=2)
-    ],
-    [
-        dict(
-            type='Rotate',
-            prob=0.5,
-            level=10),
-        dict(type='ColorTransform', prob=0.7, level=5)
-    ],
-    [
-        dict(
-            type='Translate',
-            level=4,
-        ),
-        dict(
-            type='BrightnessTransform',
-            level=5
-        )
-    ]
-]
 
 train_pipeline = [
     dict(type='LoadImageFromFile'),
@@ -233,8 +199,7 @@ train_pipeline = [
         img_scale=[(2048, 800), (2048, 1400)],
         multiscale_mode='range',
         keep_ratio=True),
-    dict(type='RandomFlip', flip_ratio=0.3),
-    dict(type='AutoAugment', policies=transformer_policies),
+    dict(type='RandomFlip', flip_ratio=0.5),
     dict(
         type='Normalize',
         mean=[123.675, 116.28, 103.53],
@@ -265,11 +230,11 @@ test_pipeline = [
 ]
 datasetA = dict(
     type=dataset_type,
-    ann_file="logdet/train/annotations/instances_train2017.json",
-    img_prefix="logdet/train/images",
+    ann_file='/home/user/data/tianchi/logdet/stage1/train/instances_train2017.json',
+    img_prefix='/home/user/data/tianchi/logdet/stage1/train/images',
     pipeline=train_pipeline)
 data = dict(
-    samples_per_gpu=1,
+    samples_per_gpu=2,
     workers_per_gpu=2,
     train=dict(
         type='RepeatDataset',
@@ -280,17 +245,17 @@ data = dict(
         )),
     val=dict(
         type=dataset_type,
-        ann_file="logdet/val/annotations/instances_val2017.json",
-        img_prefix="logdet/val/images",
+        ann_file='/home/user/data/tianchi/logdet/stage1/val/annotations/instances_val2017.json',
+        img_prefix='/home/user/data/tianchi/logdet/stage1/val/images',
         pipeline=test_pipeline),
     test=dict(
         type=dataset_type,
-        ann_file="logdet/val/annotations/instances_val2017.json",
-        img_prefix="logdet/val/images",
+        ann_file='/home/user/data/tianchi/logdet/stage1/val/annotations/instances_val2017.json',
+        img_prefix='/home/user/data/tianchi/logdet/stage1/val/images',
         pipeline=test_pipeline))
 evaluation = dict(interval=1, metric='bbox', start=12)
 optimizer_config = dict(grad_clip=None)
-optimizer = dict(type='AdamW', lr=0.0000125 * 8, betas=(0.9, 0.999), weight_decay=0.05,
+optimizer = dict(type='AdamW', lr=0.0000125*8, betas=(0.9, 0.999), weight_decay=0.05,
                  paramwise_cfg=dict(custom_keys={'absolute_pos_embed': dict(decay_mult=0.),
                                                  'relative_position_bias_table': dict(decay_mult=0.),
                                                  'norm': dict(decay_mult=0.)}))
@@ -308,7 +273,7 @@ log_config = dict(
     hooks=[
         dict(type='TextLoggerHook'),
         #  dict(type='TensorboardLoggerHook')
-    ])
+        ])
 custom_hooks = [dict(type='NumClassCheckHook')]
 dist_params = dict(backend='nccl')
 log_level = 'INFO'
@@ -316,7 +281,7 @@ load_from = None
 resume_from = None
 workflow = [('train', 1)]
 #  fp16 = dict(loss_scale=512.)
-# fp16 = None
+fp16 = None
 optimizer_config = dict(
     type="Fp16OptimizerHook",
     # update_interval=1,
