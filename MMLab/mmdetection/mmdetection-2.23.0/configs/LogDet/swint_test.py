@@ -298,8 +298,8 @@ test_pipeline = [
 ]
 datasetA = dict(
     type=dataset_type,
-    ann_file="/massStorage/disc1/yf/mmlab/data/logdet/train/instances_train2017.json",
-    img_prefix="/massStorage/disc1/yf/mmlab/data/logdet/train/images",
+    ann_file="/data/yuzun/tianchi_objdet/train/instances_train2017.json",
+    img_prefix="/data/yuzun/tianchi_objdet/train/images",
     pipeline=train_pipeline)
 data = dict(
     samples_per_gpu=1,
@@ -313,8 +313,8 @@ data = dict(
         )),
     val=dict(
         type=dataset_type,
-        ann_file="/massStorage/disc1/yf/mmlab/data/logdet/train/instances_val2017.json",
-        img_prefix="/massStorage/disc1/yf/mmlab/data/logdet/train/images",
+        ann_file="/data/yuzun/tianchi_objdet/val/instances_val2017.json",
+        img_prefix="/data/yuzun/tianchi_objdet/train/images",
         pipeline=test_pipeline),
     test=dict(
         type=dataset_type,

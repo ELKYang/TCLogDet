@@ -1,7 +1,7 @@
 num_classes = 50
 # model settings
 # implement of the issue in swin_transformer res https://github.com/microsoft/Swin-Transformer/issues/113
-pretrained = 'swin_base_patch4_window12_384.pth'
+pretrained = '/data/yuzun/tianchi_objdet/pretrain_model/swin_base_patch4_window12_384.pth'
 model = dict(
     type='HybridTaskCascade',
     backbone=dict(
@@ -20,8 +20,13 @@ model = dict(
         out_indices=(0, 1, 2, 3),
         with_cp=False,
         convert_weights=True,
+<<<<<<< HEAD
         # dcn=dict(type='DCNv2', deform_groups=1, fallback_on_stride=False),
         # stage_with_dcn=(False, True, True, True),
+=======
+#        dcn=dict(type='DCNv2', deform_groups=1, fallback_on_stride=False),
+#        stage_with_dcn=(False, True, True, True),
+>>>>>>> b6e1cd6 (initial local config by yuzun)
         init_cfg=dict(type='Pretrained', checkpoint=pretrained)),
     neck=dict(
         type='FPN',
@@ -278,12 +283,12 @@ test_pipeline = [
 ]
 datasetA = dict(
     type=dataset_type,
-    ann_file="logdet/train/annotations/instances_train2017.json",
-    img_prefix="logdet/train/images",
+    ann_file="/data/yuzun/tianchi_objdet/train/annotations/instances_train2017.json",
+    img_prefix="/data/yuzun/tianchi_objdet/train/images",
     pipeline=train_pipeline)
 data = dict(
-    samples_per_gpu=1,
-    workers_per_gpu=2,
+    samples_per_gpu=2,
+    workers_per_gpu=10,
     train=dict(
         type='RepeatDataset',
         times=3,
@@ -293,13 +298,13 @@ data = dict(
         )),
     val=dict(
         type=dataset_type,
-        ann_file="logdet/val/annotations/instances_val2017.json",
-        img_prefix="logdet/val/images",
+        ann_file="/data/yuzun/tianchi_objdet/val/annotations/instances_val2017.json",
+        img_prefix="/data/yuzun/tianchi_objdet/val/images",
         pipeline=test_pipeline),
     test=dict(
         type=dataset_type,
-        ann_file="logdet/val/annotations/instances_val2017.json",
-        img_prefix="logdet/val/images",
+        ann_file="/data/yuzun/tianchi_objdet/val/annotations/instances_val2017.json",
+        img_prefix="/data/yuzun/tianchi_objdet/val/images",
         pipeline=test_pipeline))
 evaluation = dict(interval=1, metric='bbox', start=12)
 optimizer_config = dict(grad_clip=None)

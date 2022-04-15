@@ -1,6 +1,11 @@
 num_classes = 50
+<<<<<<< HEAD:MMLab/mmdetection/mmdetection-2.23.0/configs/LogDet/swinb_baseline.py
 pretrained = 'swin_base_patch4_window12_384.pth'
 # model settings
+=======
+# model settings
+pretrained = '/data/yuzun/tianchi_objdet/pretrain_model/swin_base_patch4_window12_384.pth'
+>>>>>>> b6e1cd6 (initial local config by yuzun):MMLab/mmdetection/mmdetection-2.23.0/configs/LogDet/swinb_3x_bigsize_anchor_bs2x8.py
 model = dict(
     type='CascadeRCNN',
     backbone=dict(
@@ -230,8 +235,13 @@ test_pipeline = [
 ]
 datasetA = dict(
     type=dataset_type,
+<<<<<<< HEAD:MMLab/mmdetection/mmdetection-2.23.0/configs/LogDet/swinb_baseline.py
     ann_file='/home/user/data/tianchi/logdet/stage1/train/instances_train2017.json',
     img_prefix='/home/user/data/tianchi/logdet/stage1/train/images',
+=======
+    ann_file="/data/yuzun/tianchi_objdet/train/annotations/instances_train2017.json",
+    img_prefix="/data/yuzun/tianchi_objdet/train/images",
+>>>>>>> b6e1cd6 (initial local config by yuzun):MMLab/mmdetection/mmdetection-2.23.0/configs/LogDet/swinb_3x_bigsize_anchor_bs2x8.py
     pipeline=train_pipeline)
 data = dict(
     samples_per_gpu=2,
@@ -245,6 +255,7 @@ data = dict(
         )),
     val=dict(
         type=dataset_type,
+<<<<<<< HEAD:MMLab/mmdetection/mmdetection-2.23.0/configs/LogDet/swinb_baseline.py
         ann_file='/home/user/data/tianchi/logdet/stage1/val/annotations/instances_val2017.json',
         img_prefix='/home/user/data/tianchi/logdet/stage1/val/images',
         pipeline=test_pipeline),
@@ -252,6 +263,15 @@ data = dict(
         type=dataset_type,
         ann_file='/home/user/data/tianchi/logdet/stage1/val/annotations/instances_val2017.json',
         img_prefix='/home/user/data/tianchi/logdet/stage1/val/images',
+=======
+        ann_file="/data/yuzun/tianchi_objdet/val/annotations/instances_val2017.json",
+        img_prefix="/data/yuzun/tianchi_objdet/val/images",
+        pipeline=test_pipeline),
+    test=dict(
+        type=dataset_type,
+        ann_file="/data/yuzun/tianchi_objdet/val/annotations/instances_val2017.json",
+        img_prefix="/data/yuzun/tianchi_objdet/val/images",
+>>>>>>> b6e1cd6 (initial local config by yuzun):MMLab/mmdetection/mmdetection-2.23.0/configs/LogDet/swinb_3x_bigsize_anchor_bs2x8.py
         pipeline=test_pipeline))
 evaluation = dict(interval=1, metric='bbox', start=12)
 optimizer_config = dict(grad_clip=None)
