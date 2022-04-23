@@ -1,9 +1,8 @@
 num_classes = 50
 # model settings
-# implement of the issue in swin_transformer res https://github.com/microsoft/Swin-Transformer/issues/113
 pretrained = '/data/yuzun/tianchi_objdet/pretrain_model/swin_base_patch4_window12_384.pth'
 model = dict(
-    type='HybridTaskCascade',
+    type='CascadeRCNN',
     backbone=dict(
         type='SwinTransformer',
         embed_dims=128,
@@ -20,8 +19,6 @@ model = dict(
         out_indices=(0, 1, 2, 3),
         with_cp=False,
         convert_weights=True,
-#        dcn=dict(type='DCNv2', deform_groups=1, fallback_on_stride=False),
-#        stage_with_dcn=(False, True, True, True),
         init_cfg=dict(type='Pretrained', checkpoint=pretrained)),
     neck=dict(
         type='FPN',
@@ -48,7 +45,7 @@ model = dict(
         reg_decoded_bbox=True,  # 使用GIoUI时注意添加
         loss_bbox=dict(type='GIoULoss', loss_weight=1.0)),
     roi_head=dict(
-        type='HybridTaskCascadeRoIHead',
+        type='CascadeRoIHead',
         num_stages=3,
         stage_loss_weights=[1, 0.5, 0.25],
         bbox_roi_extractor=dict(
@@ -203,6 +200,7 @@ model = dict(
 dataset_type = 'LogDetMini'
 transformer_policies = [
     [
+#         dict(type='Sharpness', prob=0.0, level=4),
         dict(
             type='Shear',
             prob=0.5,
@@ -229,21 +227,10 @@ transformer_policies = [
 
 train_pipeline = [
     dict(type='LoadImageFromFile'),
-    dict(
-            type='InstaBoost',
-            action_candidate=('normal', 'horizontal', 'skip'),
-            action_prob=(1, 0, 0),
-            scale=(0.8, 1.2),
-            dx=15,
-            dy=15,
-            theta=(-1, 1),
-            color_prob=0.5,
-            hflag=False,
-            aug_ratio=0.5),
     dict(type='LoadAnnotations', with_bbox=True),
     dict(
         type='Resize',
-        img_scale=[(2048, 800), (2048, 1000), (2048, 1200), (2048, 1400)],
+        img_scale=[(2048, 800), (2048, 1400)],
         multiscale_mode='range',
         keep_ratio=True),
     dict(type='RandomFlip', flip_ratio=0.3),
@@ -282,8 +269,8 @@ datasetA = dict(
     img_prefix="/data/yuzun/tianchi_objdet/train/images",
     pipeline=train_pipeline)
 data = dict(
-    samples_per_gpu=2,
-    workers_per_gpu=10,
+    samples_per_gpu=1,
+    workers_per_gpu=2,
     train=dict(
         type='RepeatDataset',
         times=3,

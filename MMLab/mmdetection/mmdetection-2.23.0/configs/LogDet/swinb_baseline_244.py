@@ -1,5 +1,6 @@
 num_classes = 50
-pretrained = '/data/yuzun/tianchi_objdet/pretrain_model/swin_base_patch4_window12_384.pth'
+pretrained = '/data/yuzun/tianchi_objdet/pretrain_model/swin_base_patch4_window7_224.pth'
+
 # model settings
 model = dict(
     type='CascadeRCNN',
@@ -8,7 +9,7 @@ model = dict(
         embed_dims=128,
         depths=[2, 2, 18, 2],
         num_heads=[4, 8, 16, 32],
-        window_size=12,
+        window_size=7,
         mlp_ratio=4,
         qkv_bias=True,
         qk_scale=None,
@@ -231,11 +232,11 @@ test_pipeline = [
 datasetA = dict(
     type=dataset_type,
     ann_file='/data/yuzun/tianchi_objdet/train/annotations/instances_train2017.json',
-    img_prefix='/data/yuzun/tianchi_objdet/train/annotations/images',
+    img_prefix='/data/yuzun/tianchi_objdet/train/images',
     pipeline=train_pipeline)
 data = dict(
-    samples_per_gpu=2,
-    workers_per_gpu=2,
+    samples_per_gpu=1,
+    workers_per_gpu=4,
     train=dict(
         type='RepeatDataset',
         times=3,
@@ -250,8 +251,8 @@ data = dict(
         pipeline=test_pipeline),
     test=dict(
         type=dataset_type,
-        ann_file='/data/yuzun/tianchi_objdet/val/annotations/instances_val2017.json',
-        img_prefix='/data/yuzun/tianchi_objdet/val/images',
+        ann_file='/data/yuzun/tianchi_objdet/new_val/val/annotations/instances_val2017.json',
+        img_prefix='/data/yuzun/tianchi_objdet/new_val/val/images',
         pipeline=test_pipeline))
 evaluation = dict(interval=1, metric='bbox', start=12)
 optimizer_config = dict(grad_clip=None)
